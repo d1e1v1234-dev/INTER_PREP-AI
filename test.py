@@ -1,11 +1,36 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
-from backend.config import GEMINI_API_KEY
+from backend.rag.document_loader import DocumentLoader
+from backend.rag.text_splitter import TextSplitter
+from backend.rag.embeddings import EmbeddingModel
+from backend.rag.vector_store import VectorStore
+from backend.rag.retriever import Retriever
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-3.5-flash-lite",
-    google_api_key=GEMINI_API_KEY,
+# Load PDF
+loader = DocumentLoader()
+text = loader.load_pdf("dl-curriculum.pdf")
+
+# Split into chunks
+splitter = TextSplitter()
+chunks = splitter.split_text(text)
+
+# Create embeddings
+embedding = EmbeddingModel()
+
+# Create Vector DB
+vector_store = VectorStore(embedding.get_embedding())
+db = vector_store.create_vector_store(chunks)
+
+print("Vector DB Created Successfully!")
+
+# Create Retriever
+retriever = Retriever(db)
+
+# Retrieve relevant chunks
+docs = retriever.retrieve(
+    "What projects are mentioned in this document?"
 )
 
-response = llm.invoke("Say Hello")
+print("=" * 50)
 
-print(response.content)
+for doc in docs:
+    print(doc.page_content)
+    print("-" * 50)

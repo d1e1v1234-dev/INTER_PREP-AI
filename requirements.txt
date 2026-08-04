@@ -4,5 +4,7 @@ langchain-google-genai
 langchain-community
 langchain-classic
 langchain-core
-langchain-docling
 langchain-huggingface
+pypdf
+langchain-text-splitters
+faiss-cpu

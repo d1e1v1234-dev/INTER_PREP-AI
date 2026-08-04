@@ -75,3 +75,21 @@ CURRENT INSTRUCTION
 """
 
     return prompt
+
+def build_report_prompt(report_prompt: str, history: list) -> str:
+
+    history_text = ""
+
+    for message in history:
+        history_text += (
+            f"{message['role'].capitalize()}: "
+            f"{message['content']}\n"
+        )
+
+    return f"""
+{report_prompt}
+
+Interview Conversation:
+
+{history_text}
+"""

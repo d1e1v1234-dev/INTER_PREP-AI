@@ -2,7 +2,7 @@ from backend.llm.gemini import GeminiLLM
 from backend.llm.prompt_builder import load_prompt, build_prompt
 from backend.memory.conversation_memory import ConversationMemory
 from backend.interview.interview_config import InterviewConfig
-
+from backend.llm.prompt_builder import build_report_prompt
 
 class InterviewEngine:
 
@@ -114,7 +114,25 @@ class InterviewEngine:
             user_input = input("\nYou: ")
 
             if user_input.lower() == "exit":
+
+                print("\nGenerating Interview Report...\n")
+
+                report_system_prompt = load_prompt("report_prompt.txt")
+
+                report_prompt = build_report_prompt(
+                    report_system_prompt,
+                    self.memory.get_history()
+                )
+
+                report = self.llm.generate(report_prompt)
+
+                print("=" * 60)
+                print("FINAL INTERVIEW REPORT")
+                print("=" * 60)
+                print(report)
+
                 print("\nInterview Ended.\n")
+
                 break
 
             self.memory.add_user_message(user_input)
