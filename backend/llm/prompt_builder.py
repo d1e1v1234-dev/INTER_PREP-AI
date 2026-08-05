@@ -13,6 +13,7 @@ def build_prompt(
     config: InterviewConfig,
     system_prompt: str,
     history: list,
+    rag_context: str = "",
     start_interview: bool = False
 ) -> str:
     system_prompt = system_prompt.format(
@@ -20,13 +21,21 @@ def build_prompt(
         DIFFICULTY=config.difficulty
     )
     history_text = ""
-
+    document_section = ""
     for message in history:
         history_text += (
             f"{message['role'].capitalize()}: "
             f"{message['content']}\n"
         )
 
+    if rag_context.strip():
+        document_section = f"""
+==============================
+RELEVANT DOCUMENTS
+==============================
+
+{rag_context}
+"""
     if start_interview:
         instruction = """
 The interview is starting now.
@@ -60,6 +69,8 @@ Interview Type:
 
 Difficulty:
 {config.difficulty}
+
+{document_section}
 
 ==============================
 CONVERSATION HISTORY

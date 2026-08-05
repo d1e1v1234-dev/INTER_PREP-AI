@@ -3,6 +3,7 @@ from backend.llm.prompt_builder import load_prompt, build_prompt
 from backend.memory.conversation_memory import ConversationMemory
 from backend.interview.interview_config import InterviewConfig
 from backend.llm.prompt_builder import build_report_prompt
+from backend.rag.rag_pipeline import RAGPipeline
 
 class InterviewEngine:
 
@@ -10,20 +11,16 @@ class InterviewEngine:
 
         self.llm = GeminiLLM()
         self.memory = ConversationMemory()
+        self.rag = RAGPipeline()
 
         self.config = None
         self.system_prompt = None
 
-        self.PROMPT_MAP = {
-            "HR": "hr_prompt.txt",
-            "DSA": "dsa_prompt.txt",
-            "Machine Learning": "ml_prompt.txt"
-        }
-
         self.INTERVIEW_MAP = {
             "1": "HR",
             "2": "DSA",
-            "3": "Machine Learning"
+            "3": "Machine Learning",
+            "4": "PDF Based"
         }
 
         self.DIFFICULTY_MAP = {
@@ -46,6 +43,7 @@ class InterviewEngine:
         print("1. HR")
         print("2. DSA")
         print("3. Machine Learning")
+        print("4. PDF Based")
 
         choice = input("> ")
 
@@ -80,13 +78,20 @@ class InterviewEngine:
             interview_type=interview_type,
             difficulty=difficulty
         )
+        if self.config.interview_type == "PDF Based":
 
+            pdf_path = input("\nEnter PDF Path: ").strip()
+
+            self.rag.load_document(pdf_path)
+
+            print("✅ PDF Loaded Successfully!")
         # -------------------------
         # Load Prompt
         # -------------------------
 
         self.system_prompt = load_prompt("interview_prompt.txt")
 
+        
         # -------------------------
         # Start Interview
         # -------------------------
@@ -137,10 +142,16 @@ class InterviewEngine:
 
             self.memory.add_user_message(user_input)
 
+            rag_context = ""
+
+            if self.config.interview_type == "PDF Based":
+                rag_context = self.rag.retrieve(user_input)
+
             prompt = build_prompt(
                 config=self.config,
                 system_prompt=self.system_prompt,
                 history=self.memory.get_history(),
+                rag_context=rag_context,
                 start_interview=False
             )
 
