@@ -8,3 +8,6 @@ langchain-huggingface
 pypdf
 langchain-text-splitters
 faiss-cpu
+pydantic
+fastapi
+uvicorn

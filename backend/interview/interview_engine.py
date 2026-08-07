@@ -16,85 +16,16 @@ class InterviewEngine:
         self.config = None
         self.system_prompt = None
 
-        self.INTERVIEW_MAP = {
-            "1": "HR",
-            "2": "DSA",
-            "3": "Machine Learning",
-            "4": "PDF Based"
-        }
+    def start_interview(self, interview_type: str, difficulty: str):
 
-        self.DIFFICULTY_MAP = {
-            "1": "Easy",
-            "2": "Medium",
-            "3": "Hard"
-        }
-
-    def start(self):
-
-        print("=" * 60)
-        print("Welcome to INTER_PREP AI")
-        print("=" * 60)
-
-        # -------------------------
-        # Select Interview Type
-        # -------------------------
-
-        print("\nChoose Interview Type")
-        print("1. HR")
-        print("2. DSA")
-        print("3. Machine Learning")
-        print("4. PDF Based")
-
-        choice = input("> ")
-
-        interview_type = self.INTERVIEW_MAP.get(choice)
-
-        if interview_type is None:
-            print("Invalid Interview Type")
-            return
-
-        # -------------------------
-        # Select Difficulty
-        # -------------------------
-
-        print("\nChoose Difficulty")
-        print("1. Easy")
-        print("2. Medium")
-        print("3. Hard")
-
-        difficulty_choice = input("> ")
-
-        difficulty = self.DIFFICULTY_MAP.get(difficulty_choice)
-
-        if difficulty is None:
-            print("Invalid Difficulty")
-            return
-
-        # -------------------------
-        # Create Interview Config
-        # -------------------------
+        self.memory = ConversationMemory()
 
         self.config = InterviewConfig(
             interview_type=interview_type,
             difficulty=difficulty
         )
-        if self.config.interview_type == "PDF Based":
-
-            pdf_path = input("\nEnter PDF Path: ").strip()
-
-            self.rag.load_document(pdf_path)
-
-            print("✅ PDF Loaded Successfully!")
-        # -------------------------
-        # Load Prompt
-        # -------------------------
 
         self.system_prompt = load_prompt("interview_prompt.txt")
-
-        
-        # -------------------------
-        # Start Interview
-        # -------------------------
 
         start_prompt = build_prompt(
             config=self.config,
@@ -107,57 +38,46 @@ class InterviewEngine:
 
         self.memory.add_assistant_message(response)
 
-        print("\nAI:\n")
-        print(response)
+        return response
+    def chat(self, message: str):
 
-        # -------------------------
-        # Conversation Loop
-        # -------------------------
+        self.memory.add_user_message(message)
 
-        while True:
+        rag_context = ""
 
-            user_input = input("\nYou: ")
+        if self.config.interview_type == "PDF Based":
+            rag_context = self.rag.retrieve(message)
 
-            if user_input.lower() == "exit":
+        prompt = build_prompt(
+            config=self.config,
+            system_prompt=self.system_prompt,
+            history=self.memory.get_history(),
+            rag_context=rag_context,
+            start_interview=False
+        )
 
-                print("\nGenerating Interview Report...\n")
+        response = self.llm.generate(prompt)
 
-                report_system_prompt = load_prompt("report_prompt.txt")
+        self.memory.add_assistant_message(response)
 
-                report_prompt = build_report_prompt(
-                    report_system_prompt,
-                    self.memory.get_history()
-                )
+        return response
+    
+    def upload_pdf(self, pdf_path: str):
 
-                report = self.llm.generate(report_prompt)
+        self.rag.load_document(pdf_path)
 
-                print("=" * 60)
-                print("FINAL INTERVIEW REPORT")
-                print("=" * 60)
-                print(report)
+        return "PDF Uploaded Successfully"
+    
 
-                print("\nInterview Ended.\n")
+    def end_interview(self):
 
-                break
+        report_system_prompt = load_prompt("report_prompt.txt")
 
-            self.memory.add_user_message(user_input)
+        report_prompt = build_report_prompt(
+            report_system_prompt,
+            self.memory.get_history()
+        )
 
-            rag_context = ""
+        report = self.llm.generate(report_prompt)
 
-            if self.config.interview_type == "PDF Based":
-                rag_context = self.rag.retrieve(user_input)
-
-            prompt = build_prompt(
-                config=self.config,
-                system_prompt=self.system_prompt,
-                history=self.memory.get_history(),
-                rag_context=rag_context,
-                start_interview=False
-            )
-
-            response = self.llm.generate(prompt)
-
-            self.memory.add_assistant_message(response)
-
-            print("\nAI:\n")
-            print(response)
+        return report
