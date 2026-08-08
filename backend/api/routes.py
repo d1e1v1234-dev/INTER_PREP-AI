@@ -1,9 +1,5 @@
-from fastapi import APIRouter
-from backend.api.schemas import (
-    StartInterviewRequest,
-    ChatRequest,
-    UploadPDFRequest,
-)
+from fastapi import APIRouter, UploadFile, File
+from backend.api.schemas import StartInterviewRequest, ChatRequest
 from backend.interview.interview_engine import InterviewEngine
 
 router = APIRouter()
@@ -16,7 +12,7 @@ def start_interview(request: StartInterviewRequest):
 
     response = engine.start_interview(
         interview_type=request.interview_type,
-        difficulty=request.difficulty,
+        difficulty=request.difficulty
     )
 
     return {
@@ -35,9 +31,15 @@ def chat(request: ChatRequest):
 
 
 @router.post("/upload-pdf")
-def upload_pdf(request: UploadPDFRequest):
+async def upload_pdf(file: UploadFile = File(...)):
 
-    message = engine.upload_pdf(request.pdf_path)
+    pdf_path = f"backend/uploads/{file.filename}"
+
+    with open(pdf_path, "wb") as buffer:
+        content = await file.read()
+        buffer.write(content)
+
+    message = engine.upload_pdf(pdf_path)
 
     return {
         "message": message

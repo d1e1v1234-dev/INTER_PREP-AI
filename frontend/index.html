@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0e1013">
+    <meta name="color-scheme" content="dark">
+
+    <title>INTER_PREP AI — Your AI Interview Coach</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- background ambience -->
+    <div class="stage-glow" aria-hidden="true"></div>
+
+    <!-- START SCREEN -->
+
+    <div id="start-screen" class="container">
+
+        <div class="header">
+            <div class="eyebrow"><span class="rec-dot" aria-hidden="true"></span>AI INTERVIEW COACH</div>
+            <h1>INTER_PREP<span class="cursor">_</span></h1>
+            <p>Practice like it's the real room. Get graded like it matters.</p>
+        </div>
+
+        <div class="card">
+
+            <div class="card-head">
+                <span class="step-index">01</span>
+                <div>
+                    <h2>Choose your session</h2>
+                    <p class="card-sub">Pick the track you want to be grilled on.</p>
+                </div>
+            </div>
+
+            <label>Interview Type</label>
+
+            <div class="options type-options">
+
+                <button class="type-btn" data-type="Machine Learning" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="5" r="1.6"/><circle cx="19" cy="5" r="1.6"/><circle cx="5" cy="19" r="1.6"/><circle cx="19" cy="19" r="1.6"/><path d="M9.6 10.4 6.2 6.2M14.4 10.4l3.4-4.2M9.6 13.6 6.2 17.8M14.4 13.6l3.4 4.2"/></svg>
+                    <span>Machine Learning</span>
+                </button>
+
+                <button class="type-btn" data-type="DSA" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4c-2 0-2.5 1-2.5 2.5S6 9 6 11s-.5 1-1.5 1M8 4c2 0 2.5 1 2.5 2.5S9 9 9 11s.5 1 1.5 1"/><path d="M8 20c-2 0-2.5-1-2.5-2.5S6 15 6 13s-.5-1-1.5-1M8 20c2 0 2.5-1 2.5-2.5S9 15 9 13s.5-1 1.5-1"/><path d="M16 4c2 0 2.5 1 2.5 2.5S18 9 18 11s.5 1 1.5 1M16 4c-2 0-2.5 1-2.5 2.5S15 9 15 11s-.5 1-1.5 1"/><path d="M16 20c2 0 2.5-1 2.5-2.5S18 15 18 13s.5-1 1.5-1M16 20c-2 0-2.5-1-2.5-2.5S15 15 15 13s-.5-1-1.5-1"/></svg>
+                    <span>DSA</span>
+                </button>
+
+                <button class="type-btn" data-type="HR" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16v10H9l-5 4V6Z"/><path d="M8 10h8M8 13h5"/></svg>
+                    <span>HR</span>
+                </button>
+
+                <button class="type-btn" data-type="PDF Based" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 12.5h1.6c.7 0 1.2.5 1.2 1.2s-.5 1.2-1.2 1.2H9.5V12.5Zm0 2.4v2.1M13.5 12.5h1.4c.9 0 1.5.9 1.5 2s-.6 2-1.5 2h-1.4v-4Z"/></svg>
+                    <span>PDF Based</span>
+                </button>
+
+            </div>
+
+            <div id="pdf-section" class="hidden">
+
+                <label>Reference Document</label>
+
+                <label for="pdf-file" class="dropzone" id="dropzone">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4M12 4 8 8M12 4l4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+                    <span class="dz-text">Drop a PDF here or <u>browse</u></span>
+                    <span class="dz-file" id="dz-file"></span>
+                </label>
+
+                <input
+                    type="file"
+                    id="pdf-file"
+                    accept=".pdf"
+                    class="visually-hidden"
+                >
+
+            </div>
+
+            <label>Difficulty</label>
+
+            <div class="options difficulty-options">
+
+                <button class="difficulty-btn" data-difficulty="Easy" type="button">
+                    <span class="diff-dot"></span>Easy
+                </button>
+
+                <button class="difficulty-btn" data-difficulty="Medium" type="button">
+                    <span class="diff-dot"></span>Medium
+                </button>
+
+                <button class="difficulty-btn" data-difficulty="Hard" type="button">
+                    <span class="diff-dot"></span>Hard
+                </button>
+
+            </div>
+
+            <button id="start-btn" class="start-btn" type="button">
+                <span class="btn-label">Start Interview</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-arrow"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+
+            <p id="error-message" role="alert"></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHAT SCREEN -->
+
+    <div id="chat-screen" class="chat-container hidden">
+
+        <div class="chat-header">
+
+            <div class="chat-header-left">
+                <span class="rec-dot" aria-hidden="true"></span>
+                <div>
+                    <h2>INTER_PREP<span class="cursor">_</span></h2>
+                    <span id="interview-info"></span>
+                </div>
+            </div>
+
+            <div class="header-buttons">
+
+                <span id="session-timer" class="session-timer">00:00</span>
+
+                <button id="view-report-btn" class="hidden ghost-btn" type="button">
+                    View Report
+                </button>
+
+                <button id="end-btn" class="ghost-btn danger" type="button">
+                    End Interview
+                </button>
+
+            </div>
+
+        </div>
+
+        <div id="messages" class="messages" aria-live="polite">
+        </div>
+
+        <div class="input-area">
+
+            <textarea
+                id="message-input"
+                placeholder="Type your answer..."
+                rows="1"
+            ></textarea>
+
+            <button id="send-btn" type="button" aria-label="Send message">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- REPORT SCREEN -->
+
+    <div id="report-screen" class="report-container hidden">
+
+        <div class="report-header">
+            <div class="eyebrow">SESSION DEBRIEF</div>
+            <h1>Interview Report</h1>
+            <p>Here's how you did — read it, then go again.</p>
+        </div>
+
+        <div id="report-content" class="report-content">
+        </div>
+
+        <div class="report-actions">
+
+            <button id="view-chat-btn" class="ghost-btn" type="button">
+                View Conversation
+            </button>
+
+            <button id="new-interview-btn" class="start-btn" type="button">
+                Start New Interview
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
