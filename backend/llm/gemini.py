@@ -11,7 +11,8 @@ class GeminiLLM:
             model="gemini-3.5-flash-lite",
             google_api_key=GEMINI_API_KEY,
             thinking_level="low",
-            max_output_tokens=4096
+            max_output_tokens=4096,
+            
         )
     # def __init__(self):
     #     self.llm = HuggingFaceEndpoint(

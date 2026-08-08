@@ -18,12 +18,73 @@
 
 <body>
 
-    <!-- background ambience -->
     <div class="stage-glow" aria-hidden="true"></div>
+
+    <!-- AUTH SCREEN -->
+    <!-- Reuses .container / .header / .card / .start-btn from the rest of the
+         app instead of a separate style block, so login/register look and
+         behave exactly like every other screen. -->
+
+    <div id="auth-screen" class="container">
+
+        <div class="header">
+            <div class="eyebrow"><span class="rec-dot" aria-hidden="true"></span>AI INTERVIEW COACH</div>
+            <h1>INTER_PREP<span class="cursor">_</span></h1>
+            <p>Practice like it's the real room.</p>
+        </div>
+
+        <div class="card">
+
+            <div class="auth-tabs">
+                <button id="login-tab" class="auth-tab active" type="button">Login</button>
+                <button id="register-tab" class="auth-tab" type="button">Register</button>
+            </div>
+
+            <div id="login-form">
+
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="Enter your email" autocomplete="email">
+
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
+
+                <button id="login-btn" class="start-btn" type="button">
+                    <span class="btn-label">Login</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-arrow"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </button>
+
+            </div>
+
+            <div id="register-form" class="hidden">
+
+                <label for="register-name">Name</label>
+                <input type="text" id="register-name" placeholder="Enter your name" autocomplete="name">
+
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" placeholder="Enter your email" autocomplete="email">
+
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" placeholder="Create a password (min 6 characters)" autocomplete="new-password">
+
+                <button id="register-btn" class="start-btn" type="button">
+                    <span class="btn-label">Create Account</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-arrow"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </button>
+
+            </div>
+
+            <p id="auth-message" class="form-message" role="alert"></p>
+
+        </div>
+
+    </div>
+
 
     <!-- START SCREEN -->
 
-    <div id="start-screen" class="container">
+    <div id="start-screen" class="container hidden">
+
+        <button id="logout-btn" class="logout-btn" type="button">Log out</button>
 
         <div class="header">
             <div class="eyebrow"><span class="rec-dot" aria-hidden="true"></span>AI INTERVIEW COACH</div>
@@ -77,12 +138,7 @@
                     <span class="dz-file" id="dz-file"></span>
                 </label>
 
-                <input
-                    type="file"
-                    id="pdf-file"
-                    accept=".pdf"
-                    class="visually-hidden"
-                >
+                <input type="file" id="pdf-file" accept=".pdf" class="visually-hidden">
 
             </div>
 
@@ -109,7 +165,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-arrow"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
 
-            <p id="error-message" role="alert"></p>
+            <p id="error-message" class="form-message" role="alert"></p>
 
         </div>
 
@@ -131,36 +187,20 @@
             </div>
 
             <div class="header-buttons">
-
                 <span id="session-timer" class="session-timer">00:00</span>
-
-                <button id="view-report-btn" class="hidden ghost-btn" type="button">
-                    View Report
-                </button>
-
-                <button id="end-btn" class="ghost-btn danger" type="button">
-                    End Interview
-                </button>
-
+                <button id="view-report-btn" class="hidden ghost-btn" type="button">View Report</button>
+                <button id="end-btn" class="ghost-btn danger" type="button">End Interview</button>
             </div>
 
         </div>
 
-        <div id="messages" class="messages" aria-live="polite">
-        </div>
+        <div id="messages" class="messages" aria-live="polite"></div>
 
         <div class="input-area">
-
-            <textarea
-                id="message-input"
-                placeholder="Type your answer..."
-                rows="1"
-            ></textarea>
-
+            <textarea id="message-input" placeholder="Type your answer..." rows="1"></textarea>
             <button id="send-btn" type="button" aria-label="Send message">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
             </button>
-
         </div>
 
     </div>
@@ -176,19 +216,11 @@
             <p>Here's how you did — read it, then go again.</p>
         </div>
 
-        <div id="report-content" class="report-content">
-        </div>
+        <div id="report-content" class="report-content"></div>
 
         <div class="report-actions">
-
-            <button id="view-chat-btn" class="ghost-btn" type="button">
-                View Conversation
-            </button>
-
-            <button id="new-interview-btn" class="start-btn" type="button">
-                Start New Interview
-            </button>
-
+            <button id="view-chat-btn" class="ghost-btn" type="button">View Conversation</button>
+            <button id="new-interview-btn" class="start-btn" type="button">Start New Interview</button>
         </div>
 
     </div>

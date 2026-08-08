@@ -11,3 +11,7 @@ faiss-cpu
 pydantic
 fastapi
 uvicorn
+sqlalchemy
+python-jose[cryptography]
+pwdlib[argon2]
+pymysql
