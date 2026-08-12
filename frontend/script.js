@@ -71,6 +71,12 @@ const dropzone =
 const dzFileLabel =
     document.getElementById("dz-file");
 
+const customTypeSection =
+    document.getElementById("custom-type-section");
+
+const customTypeInput =
+    document.getElementById("custom-type-input");
+
 const startButton =
     document.getElementById("start-btn");
 
@@ -481,6 +487,12 @@ accessToken = null;
 
         dzFileLabel.textContent = "";
 
+        customTypeSection.classList.add(
+            "hidden"
+        );
+
+        customTypeInput.value = "";
+
         loginForm.classList.remove(
             "hidden"
         );
@@ -739,6 +751,25 @@ typeButtons.forEach(button => {
             pdfFile.value = "";
 
             dzFileLabel.textContent = "";
+        }
+
+
+        if (selectedType === "Custom") {
+
+            customTypeSection.classList.remove(
+                "hidden"
+            );
+
+            customTypeInput.focus();
+
+        } else {
+
+            customTypeSection.classList.add(
+                "hidden"
+            );
+
+            customTypeInput.value = "";
+
         }
 
     });
@@ -1589,6 +1620,28 @@ startButton.addEventListener(
             );
 
             return;
+        }
+
+
+        if (selectedType === "Custom") {
+
+            const customTopic =
+                customTypeInput.value.trim();
+
+            if (!customTopic) {
+
+                showError(
+                    "Please type the topic you want to be interviewed on."
+                );
+
+                customTypeInput.focus();
+
+                return;
+            }
+
+            // From here on, treat the typed topic as the interview type.
+            selectedType = customTopic;
+
         }
 
 
@@ -2641,6 +2694,16 @@ function resetToStartScreen() {
 
 
         dzFileLabel.textContent =
+            "";
+
+
+        // Reset custom type
+
+        customTypeSection.classList.add(
+            "hidden"
+        );
+
+        customTypeInput.value =
             "";
 
 

@@ -396,6 +396,46 @@ label {
     color: var(--accent);
 }
 
+.type-btn-full {
+    grid-column: 1 / -1;
+    justify-content: center;
+    text-align: center;
+}
+
+#custom-type-section {
+    padding-top: 8px;
+    margin-bottom: 4px;
+}
+
+#custom-type-section label {
+    margin-top: 0;
+}
+
+.text-input {
+    width: 100%;
+    padding: 12px 14px;
+
+    border: 1px solid var(--border);
+    background: var(--surface-raised);
+    color: var(--text);
+
+    border-radius: var(--radius-sm);
+
+    font-family: var(--font-body);
+    font-size: 14px;
+
+    transition: border-color 0.15s ease;
+}
+
+.text-input::placeholder {
+    color: var(--text-faint);
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: var(--accent-border);
+}
+
 .difficulty-options {
     grid-template-columns: repeat(3, 1fr);
 }
