@@ -1,0 +1,41 @@
+services:
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: inter_prep
+      MYSQL_USER: inter_prep
+      MYSQL_PASSWORD: inter_prep
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: mysql+pymysql://inter_prep:inter_prep@db:3306/inter_prep
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist uploaded PDFs and generated TTS audio across restarts
+      - uploads_data:/app/backend/uploads
+      - tts_data:/app/backend/tts_outputs
+
+volumes:
+  mysql_data:
+  uploads_data:
+  tts_data:

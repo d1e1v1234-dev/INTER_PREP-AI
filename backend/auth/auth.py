@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 
 from jose import jwt, JWTError
@@ -7,7 +8,10 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 
-SECRET_KEY = "inter-prep-change-this-secret-key"
+SECRET_KEY = os.getenv(
+    "JWT_SECRET_KEY",
+    "inter-prep-change-this-secret-key"
+)
 
 ALGORITHM = "HS256"
 

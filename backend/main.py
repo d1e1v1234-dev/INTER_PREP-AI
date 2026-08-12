@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -16,10 +17,25 @@ app = FastAPI(
 )
 
 
+# Comma-separated list of allowed origins, e.g.
+# ALLOWED_ORIGINS="https://myapp.vercel.app,https://myapp.com"
+# Defaults to "*" so local development keeps working unchanged.
+_allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
+
+allowed_origins = (
+    ["*"]
+    if _allowed_origins_env.strip() == "*"
+    else [
+        origin.strip()
+        for origin in _allowed_origins_env.split(",")
+        if origin.strip()
+    ]
+)
+
 app.add_middleware(
     CORSMiddleware,
 
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
 
     allow_credentials=True,
 
