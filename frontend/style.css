@@ -1,5 +1,5 @@
 /* =========================================================
-   INTER_PREP AI — design tokens
+   INTER_PREP AI Ã¢â‚¬â€ design tokens
    Concept: a late-night interview practice studio. One warm
    "focus lamp" accent against near-black ink, a geometric
    display face for identity, mono for system/meta text.
@@ -457,6 +457,58 @@ label {
 
 
 /* =========================
+   MODE OPTIONS (TEXT / VOICE)
+========================= */
+
+.mode-options {
+    grid-template-columns: 1fr 1fr;
+}
+
+.mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 14px;
+
+    border: 1px solid var(--border);
+    background: var(--surface-raised);
+    color: var(--text);
+
+    border-radius: var(--radius-sm);
+
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 14px;
+    text-align: left;
+
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.mode-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--text-faint);
+    transition: color 0.15s ease;
+}
+
+.mode-btn:hover {
+    background: var(--surface-hover);
+}
+
+.mode-btn.selected {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent-strong);
+}
+
+.mode-btn.selected svg {
+    color: var(--accent);
+}
+
+
+/* =========================
    PDF DROPZONE
 ========================= */
 
@@ -829,6 +881,105 @@ label {
 
 
 /* =========================
+   VOICE INTERVIEW MODE
+========================= */
+
+.voice-input-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 22px 20px 26px;
+    border-top: 1px solid var(--border-soft);
+    background: var(--surface);
+}
+
+.voice-status {
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+    min-height: 18px;
+}
+
+.voice-record-btn {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: var(--accent-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.08s ease;
+}
+
+.voice-record-icon {
+    font-size: 26px;
+    line-height: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.voice-record-btn:hover:not(:disabled) {
+    background: var(--accent-strong);
+}
+
+.voice-record-btn:active:not(:disabled) {
+    transform: scale(0.96);
+}
+
+.voice-record-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.voice-record-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-border);
+    opacity: 0;
+}
+
+.voice-record-btn.recording {
+    background: var(--hard);
+}
+
+.voice-record-btn.recording .voice-record-ring {
+    opacity: 1;
+    animation: voice-pulse 1.4s ease-out infinite;
+}
+
+.voice-record-btn.speaking {
+    background: var(--surface-hover);
+    color: var(--text-muted);
+}
+
+@keyframes voice-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(1.55);
+        opacity: 0;
+    }
+}
+
+.voice-hint {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    color: var(--text-faint);
+}
+
+
+/* =========================
    REPORT SCREEN
 ========================= */
 
@@ -990,3 +1141,191 @@ label {
         transition-duration: 0.001ms !important;
     }
 }
+
+/* =========================
+   PREVIOUS INTERVIEWS
+========================= */
+.previous-interviews {
+    width: 100%;
+    max-width: 760px;
+    margin: 35px auto 50px;
+}
+
+.previous-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.previous-header h2 {
+    margin: 5px 0 0;
+}
+
+.interview-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 17px 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.035);
+    transition: 0.2s ease;
+}
+
+.history-card:hover {
+    border-color: rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.055);
+}
+
+.history-title {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.history-meta {
+    margin-top: 5px;
+    font-size: 12px;
+    opacity: 0.55;
+    font-family: "JetBrains Mono", monospace;
+}
+
+.history-empty {
+    text-align: center;
+    opacity: 0.5;
+    padding: 25px;
+}
+
+.view-history-btn {
+    flex-shrink: 0;
+}
+
+.history-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.continue-history-btn {
+    border-color: var(--accent-border);
+    color: var(--accent-strong);
+}
+
+.continue-history-btn:hover {
+    background: var(--accent-soft);
+}
+
+/* =========================
+   SPEECH TO TEXT - MIC
+========================= */
+
+#mic-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+
+    font-size: 20px;
+
+    padding: 8px 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0.75;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+}
+
+#mic-btn:hover {
+    opacity: 1;
+    transform: scale(1.08);
+}
+
+
+/* =========================
+   AI TEXT TO SPEECH
+========================= */
+
+
+/* =========================
+   TYPING INDICATOR
+========================= */
+
+.typing-dots {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.typing-dots span {
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+
+    opacity: 0.45;
+
+    animation: typingDot 1.2s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes typingDot {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.35;
+    }
+
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    #mic-btn {
+        font-size: 18px;
+        padding: 7px 9px;
+    }
+
+}
+
+/* DL TTS speaker button */
+.voice-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 15px;
+    margin-left: 10px;
+    padding: 3px 6px;
+    opacity: .7;
+}
+.voice-btn:hover { opacity: 1; transform: scale(1.08); }

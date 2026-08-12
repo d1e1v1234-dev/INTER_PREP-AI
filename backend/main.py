@@ -6,7 +6,7 @@ from backend.api.auth_routes import router as auth_router
 
 from backend.database.database import Base, engine
 from backend.database import models
-
+from backend.voice.routes import router as voice_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -32,3 +32,5 @@ app.add_middleware(
 app.include_router(auth_router)
 
 app.include_router(router)
+
+app.include_router(voice_router)

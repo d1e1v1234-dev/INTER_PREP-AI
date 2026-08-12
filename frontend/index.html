@@ -102,6 +102,22 @@
                 </div>
             </div>
 
+            <label>Interview Mode</label>
+
+            <div class="options mode-options">
+
+                <button class="mode-btn" data-mode="Text" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16v12H8l-4 3V6Z"/><path d="M8 10h8M8 13h5"/></svg>
+                    <span>Text Interview</span>
+                </button>
+
+                <button class="mode-btn" data-mode="Voice" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg>
+                    <span>Voice Interview</span>
+                </button>
+
+            </div>
+
             <label>Interview Type</label>
 
             <div class="options type-options">
@@ -169,6 +185,21 @@
 
         </div>
 
+        <!-- PREVIOUS INTERVIEWS -->
+        <div id="previous-interviews" class="previous-interviews">
+            <div class="previous-header">
+                <div>
+                    <div class="eyebrow">HISTORY</div>
+                    <h2>Previous Interviews</h2>
+                </div>
+                <button id="refresh-history-btn" class="ghost-btn" type="button">Refresh</button>
+            </div>
+
+            <div id="interview-history-list" class="interview-history-list">
+                <p class="history-empty">Loading your interviews...</p>
+            </div>
+        </div>
+
     </div>
 
 
@@ -188,6 +219,7 @@
 
             <div class="header-buttons">
                 <span id="session-timer" class="session-timer">00:00</span>
+                <button id="home-btn" class="hidden ghost-btn" type="button">Back to Home</button>
                 <button id="view-report-btn" class="hidden ghost-btn" type="button">View Report</button>
                 <button id="end-btn" class="ghost-btn danger" type="button">End Interview</button>
             </div>
@@ -196,11 +228,27 @@
 
         <div id="messages" class="messages" aria-live="polite"></div>
 
-        <div class="input-area">
+        <div id="text-input-area" class="input-area">
             <textarea id="message-input" placeholder="Type your answer..." rows="1"></textarea>
+
+            <button id="mic-btn" type="button" aria-label="Speech to text" title="Voice input">
+                🎙️
+            </button>
+
             <button id="send-btn" type="button" aria-label="Send message">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
             </button>
+        </div>
+
+        <div id="voice-input-area" class="voice-input-area hidden">
+            <p id="voice-status" class="voice-status">AI is speaking...</p>
+
+            <button id="voice-record-btn" type="button" class="voice-record-btn" aria-label="Record your answer">
+                <span class="voice-record-ring"></span>
+                <span class="voice-record-icon">🎙️</span>
+            </button>
+
+            <p class="voice-hint">Tap to speak your answer &middot; tap again to stop</p>
         </div>
 
     </div>

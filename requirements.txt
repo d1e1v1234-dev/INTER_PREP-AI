@@ -15,3 +15,5 @@ sqlalchemy
 python-jose[cryptography]
 pwdlib[argon2]
 pymysql
+faster-whisper
+piper-tts
