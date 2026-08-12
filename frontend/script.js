@@ -589,11 +589,9 @@ async function loadPreviousInterviews() {
                     "history-card";
 
                 const date =
-                    interview.created_at
-                        ? new Date(
-                            interview.created_at
-                        ).toLocaleString()
-                        : "";
+                    formatInterviewDate(
+                        interview.created_at
+                    );
 
                 card.innerHTML = `
                     <div class="history-card-info">
@@ -692,6 +690,37 @@ async function loadPreviousInterviews() {
     }
 
 }
+
+function formatInterviewDate(value) {
+
+    if (!value) {
+        return "";
+    }
+
+    // The backend stores timestamps in UTC but sends them without a
+    // timezone marker (e.g. "2026-08-12T18:25:32"). JS treats a bare
+    // string like that as LOCAL time, not UTC, which shows the wrong
+    // clock time. If there's no "Z" or +/-offset already, treat it as
+    // UTC explicitly by appending "Z" before parsing.
+    const hasTimezone =
+        /Z$|[+-]\d\d:?\d\d$/.test(value);
+
+    const isoValue =
+        hasTimezone
+            ? value
+            : `${value}Z`;
+
+    const parsed =
+        new Date(isoValue);
+
+    if (isNaN(parsed.getTime())) {
+        return value;
+    }
+
+    return parsed.toLocaleString();
+
+}
+
 
 function escapeHtml(value) {
 
