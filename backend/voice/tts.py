@@ -28,7 +28,7 @@ class TextToSpeech:
             "wb"
         ) as wav_file:
 
-            self.voice.synthesize_wav(
+            self.voice.synthesize(
                 text,
                 wav_file
             )
