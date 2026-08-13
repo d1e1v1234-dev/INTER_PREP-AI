@@ -10,7 +10,7 @@ class TextToSpeech:
         model_path = (
             Path(__file__).parent.parent
             / "models"
-            / "en_US-ryan-medium.onnx"
+            / "en_US-ryan-low.onnx"
         )
 
         self.voice = PiperVoice.load(
