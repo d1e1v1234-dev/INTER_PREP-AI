@@ -33,21 +33,44 @@ class TextToSpeech:
                 wav_file
             )
 
-    def synthesize_stream(self, text: str):
+    def synthesize_stream(self, text: str, max_words_per_chunk: int = 15):
         """
-        Splits text into sentences and yields a separate WAV file
-        (as bytes) per sentence, as soon as each one is ready —
-        instead of waiting for the entire text to be synthesized.
+        Splits text into small chunks (~max_words_per_chunk words each)
+        and yields a separate WAV file (as bytes) per chunk, as soon as
+        it's ready — instead of waiting for the entire text to be
+        synthesized. This keeps the first audio arriving fast even when
+        a single sentence is long.
+
+        Chunk boundaries prefer sentence-end punctuation (. ! ?) so we
+        don't cut mid-clause when a sentence happens to end right around
+        the word limit; otherwise we just cut at the word limit.
         """
         import re
         import io
 
-        # Basic sentence split; keeps punctuation attached
-        sentences = re.split(r'(?<=[.!?])\s+', text.strip())
-        sentences = [s for s in sentences if s.strip()]
+        # Tokenize into words, keeping track of sentence-ending punctuation
+        words = text.strip().split()
 
-        for sentence in sentences:
+        chunks = []
+        current_chunk = []
+
+        for word in words:
+            current_chunk.append(word)
+
+            ends_sentence = bool(re.search(r'[.!?]["\')]*$', word))
+            hit_word_limit = len(current_chunk) >= max_words_per_chunk
+
+            if hit_word_limit or (ends_sentence and len(current_chunk) >= max(5, max_words_per_chunk // 2)):
+                chunks.append(" ".join(current_chunk))
+                current_chunk = []
+
+        if current_chunk:
+            chunks.append(" ".join(current_chunk))
+
+        for chunk_text in chunks:
+            if not chunk_text.strip():
+                continue
             buffer = io.BytesIO()
             with wave.open(buffer, "wb") as wav_file:
-                self.voice.synthesize(sentence, wav_file)
+                self.voice.synthesize(chunk_text, wav_file)
             yield buffer.getvalue()
