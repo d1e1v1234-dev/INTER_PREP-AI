@@ -1,4 +1,4 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://interprep-ai-production-38e4.up.railway.app";
 
 let selectedType = null;
 let selectedDifficulty = null;
