@@ -1,7 +1,7 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from backend.config import GEMINI_API_KEY
-from backend.config import HUGGINGFACE_API_KEY
-from langchain_huggingface import ChatHuggingFace , HuggingFaceEndpoint
+# from backend.config import HUGGINGFACE_API_KEY
+# from langchain_huggingface import ChatHuggingFace , HuggingFaceEndpoint
 
 
 class GeminiLLM:
