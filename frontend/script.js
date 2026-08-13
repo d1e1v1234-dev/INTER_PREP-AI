@@ -1810,7 +1810,12 @@ startButton.addEventListener(
                     !uploadResponse.ok
                 ) {
 
+                    const uploadError =
+                        await uploadResponse.json()
+                            .catch(() => ({}));
+
                     throw new Error(
+                        uploadError.detail ||
                         "PDF upload failed"
                     );
 
@@ -1920,7 +1925,10 @@ startButton.addEventListener(
 
 
             showError(
-                "Could not start interview. Is the server running?"
+                error.message &&
+                error.message !== "Failed to fetch"
+                    ? error.message
+                    : "Could not start interview. Is the server running?"
             );
 
 
