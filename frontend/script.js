@@ -1019,21 +1019,71 @@ function addMessage(text, sender, speak = false) {
 // DEEP LEARNING TTS
 // =========================
 
+// Bumped whenever stopTTS() is called, so an in-flight stream/queue
+// from a previous call knows to abandon itself instead of playing on.
+let ttsPlaybackToken = 0;
+
 async function playTTS(text, button = null, onEnd = null) {
     if (!text || !accessToken) {
         if (onEnd) onEnd();
         return;
     }
 
-    try {
-        stopTTS();
+    stopTTS();
+    const myToken = ++ttsPlaybackToken;
 
-        if (button) {
-            button.textContent = "⏳";
-            currentVoiceButton = button;
+    if (button) {
+        button.textContent = "⏳";
+        currentVoiceButton = button;
+    }
+
+    const audioQueue = [];       // decoded object URLs waiting to play
+    let isPlayingQueue = false;
+    let streamDone = false;
+    let chunkCount = 0;
+
+    const finishUp = () => {
+        if (button) button.textContent = "🔊";
+        if (currentVoiceButton === button) currentVoiceButton = null;
+        if (voiceRecordButton) voiceRecordButton.classList.remove("speaking");
+        if (onEnd) onEnd();
+    };
+
+    const playNextInQueue = () => {
+        if (myToken !== ttsPlaybackToken) return; // stopped/superseded
+        if (audioQueue.length === 0) {
+            isPlayingQueue = false;
+            if (streamDone && currentAudio === null) finishUp();
+            return;
         }
 
-        const response = await fetch(`${API_BASE}/voice/synthesize`, {
+        isPlayingQueue = true;
+        const url = audioQueue.shift();
+        const audio = new Audio(url);
+        currentAudio = audio;
+        if (button) button.textContent = "⏹️";
+
+        const cleanupAndAdvance = () => {
+            URL.revokeObjectURL(url);
+            if (currentAudio === audio) currentAudio = null;
+            if (myToken !== ttsPlaybackToken) return;
+            playNextInQueue();
+        };
+
+        audio.onended = cleanupAndAdvance;
+        audio.onerror = () => {
+            console.error("TTS chunk playback failed");
+            cleanupAndAdvance();
+        };
+
+        audio.play().catch((err) => {
+            console.error("TTS play() blocked/failed:", err);
+            cleanupAndAdvance();
+        });
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/voice/synthesize-stream`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -1042,53 +1092,65 @@ async function playTTS(text, button = null, onEnd = null) {
             body: JSON.stringify({ text })
         });
 
-        if (!response.ok) {
+        if (!response.ok || !response.body) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.detail || "TTS failed.");
         }
 
-        const blob = await response.blob();
-        if (!blob.size) throw new Error("TTS returned empty audio.");
+        const reader = response.body.getReader();
+        let buffer = new Uint8Array(0);
 
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        currentAudio = audio;
-
-        if (button) button.textContent = "⏹️";
-
-        audio.onended = () => {
-            URL.revokeObjectURL(url);
-            if (button) button.textContent = "🔊";
-            if (currentAudio === audio) currentAudio = null;
-            if (currentVoiceButton === button) currentVoiceButton = null;
-            if (voiceRecordButton) voiceRecordButton.classList.remove("speaking");
-            if (onEnd) onEnd();
+        const appendBuffer = (chunk) => {
+            const merged = new Uint8Array(buffer.length + chunk.length);
+            merged.set(buffer, 0);
+            merged.set(chunk, buffer.length);
+            buffer = merged;
         };
 
-        audio.onerror = () => {
-            URL.revokeObjectURL(url);
-            if (button) button.textContent = "🔊";
-            if (currentAudio === audio) currentAudio = null;
-            if (currentVoiceButton === button) currentVoiceButton = null;
-            if (voiceRecordButton) voiceRecordButton.classList.remove("speaking");
-            console.error("TTS audio playback failed");
-            if (onEnd) onEnd();
-        };
+        while (true) {
+            const { done, value } = await reader.read();
+            if (myToken !== ttsPlaybackToken) return; // stopped mid-stream
 
-        await audio.play();
+            if (value) appendBuffer(value);
+
+            // Peel off as many complete [4-byte length][wav bytes] frames
+            // as are currently available in the buffer.
+            while (buffer.length >= 4) {
+                const len =
+                    (buffer[0] << 24) |
+                    (buffer[1] << 16) |
+                    (buffer[2] << 8) |
+                    buffer[3];
+
+                if (buffer.length < 4 + len) break; // wait for more data
+
+                const wavBytes = buffer.slice(4, 4 + len);
+                buffer = buffer.slice(4 + len);
+
+                const blob = new Blob([wavBytes], { type: "audio/wav" });
+                audioQueue.push(URL.createObjectURL(blob));
+                chunkCount++;
+
+                if (!isPlayingQueue) playNextInQueue();
+            }
+
+            if (done) break;
+        }
+
+        streamDone = true;
+        if (chunkCount === 0) throw new Error("TTS returned no audio.");
+        if (!isPlayingQueue && audioQueue.length === 0 && currentAudio === null) {
+            finishUp();
+        }
 
     } catch (error) {
         console.error("TTS error:", error);
-        if (button) button.textContent = "🔊";
-        if (currentVoiceButton === button) currentVoiceButton = null;
-        if (voiceRecordButton) voiceRecordButton.classList.remove("speaking");
-        // Autoplay can be blocked by Chrome. Manual 🔊 remains available,
-        // and in voice mode we still hand the turn back to the candidate.
-        if (onEnd) onEnd();
+        if (myToken === ttsPlaybackToken) finishUp();
     }
 }
 
 function stopTTS() {
+    ttsPlaybackToken++; // invalidates any in-flight stream/queue
     if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;

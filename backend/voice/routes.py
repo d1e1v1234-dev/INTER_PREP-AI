@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from pathlib import Path
 import uuid
 import os
+import struct
 
 from .tts import TextToSpeech
 
@@ -99,3 +100,39 @@ async def synthesize_voice(
             status_code=500,
             detail=f"TTS failed: {str(e)}"
         )
+
+
+@router.post("/synthesize-stream")
+async def synthesize_voice_stream(
+    request: TTSRequest
+):
+    """
+    Streams audio back sentence-by-sentence instead of waiting for
+    the full text to synthesize. Each chunk is sent as:
+    [4 bytes: chunk length (uint32, big-endian)] + [chunk WAV bytes]
+    so the frontend can split the stream back into playable clips.
+    """
+
+    text = request.text.strip()
+
+    if not text:
+        raise HTTPException(
+            status_code=400,
+            detail="Text cannot be empty."
+        )
+
+    def audio_generator():
+        try:
+            for wav_bytes in tts_model.synthesize_stream(text):
+                length_prefix = struct.pack(">I", len(wav_bytes))
+                yield length_prefix + wav_bytes
+        except Exception as e:
+            # Can't raise HTTPException mid-stream; just stop the stream.
+            # Client should handle an incomplete/short stream gracefully.
+            print(f"TTS streaming failed: {e}")
+            return
+
+    return StreamingResponse(
+        audio_generator(),
+        media_type="application/octet-stream"
+    )
