@@ -33,7 +33,7 @@ class TextToSpeech:
                 wav_file
             )
 
-    def synthesize_stream(self, text: str, max_words_per_chunk: int = 10):
+    def synthesize_stream(self, text: str, max_words_per_chunk: int = 15):
         """
         Splits text into small chunks (~max_words_per_chunk words each)
         and yields a separate WAV file (as bytes) per chunk, as soon as
