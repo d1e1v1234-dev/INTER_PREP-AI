@@ -1,5 +1,9 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from backend.config import GEMINI_API_KEY
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4c39c2db7bf0c769afa8487c6bab37f0b1c2e148
 
 
 class GeminiLLM:
