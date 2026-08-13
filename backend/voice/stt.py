@@ -6,7 +6,7 @@ class SpeechToText:
     def __init__(self):
 
         self.model = WhisperModel(
-            "small",
+            "base",
             device="cpu",
             compute_type="int8"
         )
@@ -16,7 +16,7 @@ class SpeechToText:
 
         segments, info = self.model.transcribe(
             audio_path,
-            beam_size=5
+            beam_size=1
         )
 
         text = " ".join(

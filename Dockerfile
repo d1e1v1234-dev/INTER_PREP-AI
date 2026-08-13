@@ -19,11 +19,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-# Pre-download the faster-whisper "small" model into the image so the
+# Pre-download the faster-whisper "base" model into the image so the
 # container never has to hit the internet for it at runtime (avoids a
 # slow/unreliable first request and works even if the host blocks
-# outbound downloads after deploy).
-RUN python3 -c "from faster_whisper import WhisperModel; WhisperModel('small', device='cpu', compute_type='int8')"
+# outbound downloads after deploy). "base" is used instead of "small"
+# to keep memory usage low on constrained hosting plans.
+RUN python3 -c "from faster_whisper import WhisperModel; WhisperModel('base', device='cpu', compute_type='int8')"
 
 # App code
 COPY backend ./backend
